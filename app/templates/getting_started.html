@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block page_title %}Getting Started{% endblock %}
+{% block title %}Getting Started — Tax Obligation Monitor{% endblock %}
+
+{% block help_content %}
+<h4>Getting Started Guide</h4>
+<p>This page walks you through setting up and using the Tax Obligation Monitor.</p>
+{% endblock %}
+
+{% block content %}
+<div class="getting-started">
+  <div class="gs-intro">
+    <h2>Welcome to the Tax Obligation Monitor</h2>
+    <p>Follow these steps to set up your tax compliance tracking system.</p>
+  </div>
+
+  <nav class="gs-nav">
+    <a href="#step-1">1. Overview</a>
+    <a href="#step-2">2. Prerequisites</a>
+    <a href="#step-3">3. First Steps</a>
+    <a href="#step-4">4. Jurisdictions</a>
+    <a href="#step-5">5. Deadlines</a>
+    <a href="#step-6">6. Nexus Tracking</a>
+    <a href="#step-7">7. Payments</a>
+    <a href="#step-8">8. AI Analysis</a>
+    <a href="#step-9">9. Next Steps</a>
+  </nav>
+
+  <div class="gs-steps">
+    <div class="gs-step" id="step-1">
+      <div class="gs-step-number">1</div>
+      <div class="gs-step-content">
+        <h3>What is Tax Obligation Monitor?</h3>
+        <p>Tax Obligation Monitor is a multi-tenant web application that helps organizations track tax filing deadlines, nexus exposure, payment obligations, and compliance risk across jurisdictions. It integrates with the Kindo AI agent to provide intelligent risk assessments and compliance recommendations.</p>
+        <ul>
+          <li><strong>Multi-tenant</strong> — Each organization's data is isolated.</li>
+          <li><strong>Role-based access</strong> — Admin, Manager, Analyst, and Viewer roles.</li>
+          <li><strong>AI-powered</strong> — Kindo agent enrichment for compliance analysis.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="gs-step" id="step-2">
+      <div class="gs-step-number">2</div>
+      <div class="gs-step-content">
+        <h3>Prerequisites</h3>
+        <ul>
+          <li>An account with the appropriate role (Admin, Manager, or Analyst for write access).</li>
+          <li>Your organization's tenant code for registration.</li>
+          <li>For AI analysis: <code>KINDO_API_TOKEN</code> and <code>KINDO_AGENT_ID</code> environment variables configured by your administrator.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="gs-step" id="step-3">
+      <div class="gs-step-number">3</div>
+      <div class="gs-step-content">
+        <h3>First Steps</h3>
+        <ol>
+          <li>Log in with your credentials (default: <code>admin</code> / <code>admin</code>).</li>
+          <li>Review the <strong>Dashboard</strong> for an overview of your compliance posture.</li>
+          <li>Set up <strong>Jurisdictions</strong> before creating deadlines or nexus records.</li>
+          <li>Customize your theme (light/dark) using the toggle in the top bar.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="gs-step" id="step-4">
+      <div class="gs-step-number">4</div>
+      <div class="gs-step-content">
+        <h3>Setting Up Jurisdictions</h3>
+        <p>Jurisdictions are the foundation of the system. Add every state, country, or locality where you have tax obligations.</p>
+        <ol>
+          <li>Navigate to <strong>Jurisdictions</strong> in the sidebar.</li>
+          <li>Click <strong>New Jurisdiction</strong>.</li>
+          <li>Enter the name, code (e.g., <code>US-CA</code>), type, and applicable tax types.</li>
+          <li>Save to start tracking obligations for that jurisdiction.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="gs-step" id="step-5">
+      <div class="gs-step-number">5</div>
+      <div class="gs-step-content">
+        <h3>Managing Filing Deadlines</h3>
+        <p>Track every tax filing deadline with due dates, extension dates, and risk levels.</p>
+        <ol>
+          <li>Go to <strong>Deadlines</strong> and click <strong>New Deadline</strong>.</li>
+          <li>Select the jurisdiction, tax type, and due date.</li>
+          <li>Assign the filing to a team member.</li>
+          <li>Update the status as the filing progresses: Pending → In Progress → Filed.</li>
+          <li>The dashboard will alert you to overdue and upcoming deadlines.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="gs-step" id="step-6">
+      <div class="gs-step-number">6</div>
+      <div class="gs-step-content">
+        <h3>Tracking Nexus Exposure</h3>
+        <p>Document where your organization has tax nexus — the connection that triggers filing obligations.</p>
+        <ol>
+          <li>Go to <strong>Nexus Exposure</strong> and add records for each entity/jurisdiction pair.</li>
+          <li>Record revenue, employee count, and property values.</li>
+          <li>Mark whether economic nexus thresholds are met.</li>
+          <li>Use AI analysis to assess exposure risk.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="gs-step" id="step-7">
+      <div class="gs-step-number">7</div>
+      <div class="gs-step-content">
+        <h3>Payment Obligations</h3>
+        <p>Track estimated payments, quarterly installments, and annual tax settlements.</p>
+        <ol>
+          <li>Go to <strong>Payments</strong> and add each obligation.</li>
+          <li>Record amounts, due dates, and confirmation numbers for completed payments.</li>
+          <li>Filter by status to see outstanding or overdue payments.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="gs-step" id="step-8">
+      <div class="gs-step-number">8</div>
+      <div class="gs-step-content">
+        <h3>AI-Powered Analysis</h3>
+        <p>Use the Kindo AI agent to analyze compliance risk on any record.</p>
+        <ol>
+          <li>Click the <i class="fas fa-robot"></i> button on any deadline, nexus record, payment, or jurisdiction.</li>
+          <li>The agent will analyze the data and return findings, risk scores, and recommendations.</li>
+          <li>Results are saved and can be viewed in the analysis history.</li>
+        </ol>
+        <p><strong>Note:</strong> AI analysis requires <code>KINDO_API_TOKEN</code> and <code>KINDO_AGENT_ID</code> to be configured.</p>
+      </div>
+    </div>
+
+    <div class="gs-step" id="step-9">
+      <div class="gs-step-number">9</div>
+      <div class="gs-step-content">
+        <h3>Next Steps</h3>
+        <ul>
+          <li>Review your dashboard regularly for overdue deadlines and high-risk exposures.</li>
+          <li>Use the AI agent to periodically reassess compliance risk.</li>
+          <li>Admins can add new tenants and manage user roles from the Admin panel.</li>
+          <li>Contact your administrator for account changes or additional jurisdictions.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

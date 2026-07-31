@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block body_class %}page-index{% endblock %}
+{% block title %}Tax Obligation Monitor{% endblock %}
+{% block auth_content %}
+<div class="landing">
+  <div class="landing-content">
+    <i class="fas fa-landmark landing-icon"></i>
+    <h1>Tax Obligation Monitor</h1>
+    <p>Track tax filing deadlines, nexus exposure, payment obligations, and compliance risk across jurisdictions.</p>
+    <div class="landing-actions">
+      <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">Sign In</a>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-outline btn-lg">Register</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

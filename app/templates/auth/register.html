@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block body_class %}page-register{% endblock %}
+{% block title %}Register — Tax Obligation Monitor{% endblock %}
+{% block auth_content %}
+<div class="auth-card">
+  <div class="auth-header">
+    <i class="fas fa-landmark auth-logo"></i>
+    <h1>Tax Obligation Monitor</h1>
+    <p>Create a new account</p>
+  </div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+  <form method="POST" action="{{ url_for('auth.register') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="tenant_slug">Organization Code</label>
+      <input type="text" id="tenant_slug" name="tenant_slug" value="default" required class="form-control">
+      <small class="form-help">Enter the organization code provided by your administrator.</small>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Register</button>
+  </form>
+  <p class="auth-link">Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a></p>
+</div>
+{% endblock %}

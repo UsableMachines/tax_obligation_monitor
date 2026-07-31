@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block page_title %}{{ 'Edit Jurisdiction' if jurisdiction else 'New Jurisdiction' }}{% endblock %}
+{% block title %}{{ 'Edit' if jurisdiction else 'New' }} Jurisdiction — Tax Obligation Monitor{% endblock %}
+
+{% block help_content %}
+<h4>Jurisdiction Details</h4>
+<p>Define a tax jurisdiction with its code, type, and applicable tax types.</p>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="name">Name *</label>
+          <input type="text" id="name" name="name" value="{{ jurisdiction.name if jurisdiction else '' }}" required class="form-control" placeholder="e.g., California">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="code">Code *</label>
+          <input type="text" id="code" name="code" value="{{ jurisdiction.code if jurisdiction else '' }}" required class="form-control" placeholder="e.g., US-CA">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="jurisdiction_type">Type</label>
+          <select id="jurisdiction_type" name="jurisdiction_type" class="form-control">
+            {% for t in ['federal', 'state', 'local', 'international'] %}
+            <option value="{{ t }}" {% if jurisdiction and jurisdiction.jurisdiction_type == t %}selected{% endif %}>{{ t | title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="country">Country</label>
+          <input type="text" id="country" name="country" value="{{ jurisdiction.country if jurisdiction else 'United States' }}" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="tax_types">Tax Types</label>
+          <input type="text" id="tax_types" name="tax_types" value="{{ jurisdiction.tax_types if jurisdiction else '' }}" class="form-control" placeholder="income, sales, payroll, franchise">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="3" class="form-control">{{ jurisdiction.notes if jurisdiction else '' }}</textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ 'Update' if jurisdiction else 'Create' }}</button>
+        <a href="{{ url_for('jurisdictions.list_jurisdictions') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

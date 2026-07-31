@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block page_title %}{{ 'Edit Payment' if payment else 'New Payment' }}{% endblock %}
+{% block title %}{{ 'Edit' if payment else 'New' }} Payment — Tax Obligation Monitor{% endblock %}
+
+{% block help_content %}
+<h4>Payment Obligation</h4>
+<p>Record a tax payment obligation with amount, due date, and status.</p>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="description">Description *</label>
+          <input type="text" id="description" name="description" value="{{ payment.description if payment else '' }}" required class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="jurisdiction_id">Jurisdiction *</label>
+          <select id="jurisdiction_id" name="jurisdiction_id" required class="form-control">
+            <option value="">Select jurisdiction</option>
+            {% for j in jurisdictions %}
+            <option value="{{ j.id }}" {% if payment and payment.jurisdiction_id == j.id %}selected{% endif %}>{{ j.name }} ({{ j.code }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-3">
+          <label for="tax_type">Tax Type *</label>
+          <input type="text" id="tax_type" name="tax_type" value="{{ payment.tax_type if payment else '' }}" required class="form-control">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="amount">Amount ($) *</label>
+          <input type="number" id="amount" name="amount" step="0.01" value="{{ payment.amount if payment else '' }}" required class="form-control">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="due_date">Due Date *</label>
+          <input type="date" id="due_date" name="due_date" value="{{ payment.due_date.strftime('%Y-%m-%d') if payment and payment.due_date else '' }}" required class="form-control">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="status">Status</label>
+          <select id="status" name="status" class="form-control">
+            {% for s in statuses %}
+            <option value="{{ s.value }}" {% if payment and payment.status == s %}selected{% endif %}>{{ s.value | title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          <label for="risk_level">Risk Level</label>
+          <select id="risk_level" name="risk_level" class="form-control">
+            {% for r in risks %}
+            <option value="{{ r.value }}" {% if payment and payment.risk_level == r %}selected{% endif %}>{{ r.value | title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="payment_date">Payment Date</label>
+          <input type="date" id="payment_date" name="payment_date" value="{{ payment.payment_date.strftime('%Y-%m-%d') if payment and payment.payment_date else '' }}" class="form-control">
+        </div>
+        <div class="form-group col-md-4">
+          <label for="confirmation_number">Confirmation Number</label>
+          <input type="text" id="confirmation_number" name="confirmation_number" value="{{ payment.confirmation_number if payment else '' }}" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="3" class="form-control">{{ payment.notes if payment else '' }}</textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ 'Update' if payment else 'Create' }}</button>
+        <a href="{{ url_for('payments.list_payments') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

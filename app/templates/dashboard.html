@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block page_title %}Dashboard{% endblock %}
+{% block title %}Dashboard — Tax Obligation Monitor{% endblock %}
+
+{% block help_content %}
+<h4>Dashboard Overview</h4>
+<p>The dashboard gives you a snapshot of your organization's tax compliance posture across all jurisdictions.</p>
+<ul>
+  <li><strong>Overdue Deadlines</strong> — Filing deadlines that have passed without completion.</li>
+  <li><strong>Upcoming Deadlines</strong> — Filings due within the next 30 days.</li>
+  <li><strong>Payment Obligations</strong> — Outstanding tax payments and their statuses.</li>
+  <li><strong>Nexus Exposure</strong> — Jurisdictions where your organization has tax nexus.</li>
+  <li><strong>AI Analysis</strong> — Use the Kindo agent to get compliance risk assessments.</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+  <!-- KPI Cards -->
+  <div class="kpi-card kpi-danger">
+    <div class="kpi-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <div class="kpi-body">
+      <div class="kpi-value">{{ overdue_deadlines }}</div>
+      <div class="kpi-label">Overdue Deadlines</div>
+    </div>
+  </div>
+
+  <div class="kpi-card kpi-warning">
+    <div class="kpi-icon"><i class="fas fa-calendar-alt"></i></div>
+    <div class="kpi-body">
+      <div class="kpi-value">{{ total_deadlines }}</div>
+      <div class="kpi-label">Total Deadlines</div>
+    </div>
+  </div>
+
+  <div class="kpi-card kpi-info">
+    <div class="kpi-icon"><i class="fas fa-map-marked-alt"></i></div>
+    <div class="kpi-body">
+      <div class="kpi-value">{{ active_nexus }} / {{ total_nexus }}</div>
+      <div class="kpi-label">Active Nexus Exposures</div>
+    </div>
+  </div>
+
+  <div class="kpi-card kpi-success">
+    <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
+    <div class="kpi-body">
+      <div class="kpi-value">${{ "{:,.0f}".format(total_amount_due) }}</div>
+      <div class="kpi-label">Outstanding Payments</div>
+    </div>
+  </div>
+
+  <div class="kpi-card kpi-danger">
+    <div class="kpi-icon"><i class="fas fa-shield-alt"></i></div>
+    <div class="kpi-body">
+      <div class="kpi-value">{{ high_risk_nexus }}</div>
+      <div class="kpi-label">High-Risk Exposures</div>
+    </div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-icon"><i class="fas fa-globe-americas"></i></div>
+    <div class="kpi-body">
+      <div class="kpi-value">{{ jurisdictions_count }}</div>
+      <div class="kpi-label">Jurisdictions</div>
+    </div>
+  </div>
+</div>
+
+<!-- Upcoming Deadlines -->
+<div class="card mt-4">
+  <div class="card-header">
+    <h3><i class="fas fa-clock"></i> Upcoming Deadlines (Next 30 Days)</h3>
+    <a href="{{ url_for('deadlines.list_deadlines') }}" class="btn btn-sm btn-outline">View All</a>
+  </div>
+  <div class="card-body">
+    {% if upcoming_deadlines %}
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Tax Type</th>
+            <th>Due Date</th>
+            <th>Days Left</th>
+            <th>Status</th>
+            <th>Risk</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in upcoming_deadlines %}
+          <tr>
+            <td><a href="{{ url_for('deadlines.edit_deadline', did=d.id) }}">{{ d.title }}</a></td>
+            <td>{{ d.tax_type }}</td>
+            <td>{{ d.due_date.strftime('%b %d, %Y') }}</td>
+            <td>
+              <span class="badge {% if d.days_until_due <= 7 %}badge-danger{% elif d.days_until_due <= 14 %}badge-warning{% else %}badge-info{% endif %}">
+                {{ d.days_until_due }}d
+              </span>
+            </td>
+            <td><span class="status-badge status-{{ d.status.value }}">{{ d.status.value | replace('_', ' ') | title }}</span></td>
+            <td><span class="risk-badge risk-{{ d.risk_level.value }}">{{ d.risk_level.value | title }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="empty-state">No upcoming deadlines in the next 30 days.</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Risk Distribution -->
+<div class="card mt-4">
+  <div class="card-header">
+    <h3><i class="fas fa-chart-pie"></i> Risk Distribution</h3>
+  </div>
+  <div class="card-body">
+    <div class="risk-bars">
+      {% for level, count in risk_counts.items() %}
+      <div class="risk-bar-row">
+        <span class="risk-bar-label risk-{{ level }}">{{ level | title }}</span>
+        <div class="risk-bar-track">
+          <div class="risk-bar-fill risk-fill-{{ level }}" style="width: {{ (count / (total_deadlines or 1) * 100) | int }}%"></div>
+        </div>
+        <span class="risk-bar-count">{{ count }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% if not agent_configured %}
+<div class="card mt-4">
+  <div class="card-header"><h3><i class="fas fa-robot"></i> AI Analysis</h3></div>
+  <div class="card-body">
+    <div class="config-required">
+      <i class="fas fa-info-circle"></i>
+      <p><strong>Configuration Required:</strong> To enable AI-powered compliance analysis, set the <code>KINDO_API_TOKEN</code> and <code>KINDO_AGENT_ID</code> environment variables.</p>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

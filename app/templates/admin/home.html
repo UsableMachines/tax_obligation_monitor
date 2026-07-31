@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block page_title %}Admin{% endblock %}
+{% block title %}Admin — Tax Obligation Monitor{% endblock %}
+
+{% block help_content %}
+<h4>Administration</h4>
+<p>Manage users, roles, and tenants for your organization.</p>
+<ul>
+  <li><strong>Admin</strong> — Full access including user management and tenant settings.</li>
+  <li><strong>Manager</strong> — Can create, edit, and delete records.</li>
+  <li><strong>Analyst</strong> — Can create and edit records, run analyses.</li>
+  <li><strong>Viewer</strong> — Read-only access to all data.</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <h3><i class="fas fa-users"></i> Users</h3>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr><th>Username</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+            <td><span class="role-badge role-{{ u.role_name }}">{{ u.role_name }}</span></td>
+            <td>
+              <form method="POST" action="{{ url_for('admin.change_role', uid=u.id) }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <select name="role_id" class="form-control form-control-sm" style="display:inline-block;width:auto">
+                  {% for r in roles %}
+                  <option value="{{ r.id }}" {% if u.role_id == r.id %}selected{% endif %}>{{ r.name }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-xs btn-primary">Update</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <div class="card-header">
+    <h3><i class="fas fa-building"></i> Create Tenant</h3>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="{{ url_for('admin.new_tenant') }}" class="form-inline-row">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required class="form-control" placeholder="Acme Corp">
+      </div>
+      <div class="form-group">
+        <label for="slug">Slug</label>
+        <input type="text" id="slug" name="slug" required class="form-control" placeholder="acme-corp">
+      </div>
+      <button type="submit" class="btn btn-primary">Create Tenant</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

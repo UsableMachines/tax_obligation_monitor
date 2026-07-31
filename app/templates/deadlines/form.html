@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block page_title %}{{ 'Edit Deadline' if deadline else 'New Deadline' }}{% endblock %}
+{% block title %}{{ 'Edit' if deadline else 'New' }} Deadline — Tax Obligation Monitor{% endblock %}
+
+{% block help_content %}
+<h4>{{ 'Edit' if deadline else 'Create' }} Deadline</h4>
+<p>Fill in the filing deadline details:</p>
+<ul>
+  <li><strong>Jurisdiction</strong> — Select the tax jurisdiction this deadline belongs to.</li>
+  <li><strong>Tax Type</strong> — e.g., Income, Sales, Payroll, Franchise, Property.</li>
+  <li><strong>Due Date</strong> — Original filing due date.</li>
+  <li><strong>Extension Date</strong> — If an extension has been filed.</li>
+  <li><strong>Risk Level</strong> — Assessed compliance risk.</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="title">Title *</label>
+          <input type="text" id="title" name="title" value="{{ deadline.title if deadline else '' }}" required class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="jurisdiction_id">Jurisdiction *</label>
+          <select id="jurisdiction_id" name="jurisdiction_id" required class="form-control">
+            <option value="">Select jurisdiction</option>
+            {% for j in jurisdictions %}
+            <option value="{{ j.id }}" {% if deadline and deadline.jurisdiction_id == j.id %}selected{% endif %}>{{ j.name }} ({{ j.code }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          <label for="tax_type">Tax Type *</label>
+          <input type="text" id="tax_type" name="tax_type" value="{{ deadline.tax_type if deadline else '' }}" required class="form-control" placeholder="e.g., Income, Sales, Payroll">
+        </div>
+        <div class="form-group col-md-4">
+          <label for="due_date">Due Date *</label>
+          <input type="date" id="due_date" name="due_date" value="{{ deadline.due_date.strftime('%Y-%m-%d') if deadline and deadline.due_date else '' }}" required class="form-control">
+        </div>
+        <div class="form-group col-md-4">
+          <label for="extension_date">Extension Date</label>
+          <input type="date" id="extension_date" name="extension_date" value="{{ deadline.extension_date.strftime('%Y-%m-%d') if deadline and deadline.extension_date else '' }}" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          <label for="status">Status</label>
+          <select id="status" name="status" class="form-control">
+            {% for s in statuses %}
+            <option value="{{ s.value }}" {% if deadline and deadline.status == s %}selected{% endif %}>{{ s.value | replace('_', ' ') | title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="risk_level">Risk Level</label>
+          <select id="risk_level" name="risk_level" class="form-control">
+            {% for r in risks %}
+            <option value="{{ r.value }}" {% if deadline and deadline.risk_level == r %}selected{% endif %}>{{ r.value | title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="assigned_to">Assigned To</label>
+          <input type="text" id="assigned_to" name="assigned_to" value="{{ deadline.assigned_to if deadline else '' }}" class="form-control">
+        </div>
+      </div>
+
+      {% if deadline %}
+      <div class="form-group">
+        <label for="filed_date">Filed Date</label>
+        <input type="date" id="filed_date" name="filed_date" value="{{ deadline.filed_date.strftime('%Y-%m-%d') if deadline and deadline.filed_date else '' }}" class="form-control" style="max-width: 300px">
+      </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="3" class="form-control">{{ deadline.notes if deadline else '' }}</textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ 'Update' if deadline else 'Create' }} Deadline</button>
+        <a href="{{ url_for('deadlines.list_deadlines') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

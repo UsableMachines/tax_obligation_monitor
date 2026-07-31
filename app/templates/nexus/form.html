@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block page_title %}{{ 'Edit Nexus Record' if record else 'New Nexus Record' }}{% endblock %}
+{% block title %}{{ 'Edit' if record else 'New' }} Nexus — Tax Obligation Monitor{% endblock %}
+
+{% block help_content %}
+<h4>Nexus Exposure Record</h4>
+<p>Document the factors that determine tax nexus in a jurisdiction:</p>
+<ul>
+  <li><strong>Revenue</strong> — Annual revenue sourced to this jurisdiction.</li>
+  <li><strong>Employees</strong> — Number of employees working in the jurisdiction.</li>
+  <li><strong>Property</strong> — Value of owned or leased property.</li>
+  <li><strong>Threshold Met</strong> — Whether economic nexus thresholds are exceeded.</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="entity_name">Entity Name *</label>
+          <input type="text" id="entity_name" name="entity_name" value="{{ record.entity_name if record else '' }}" required class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="jurisdiction_id">Jurisdiction *</label>
+          <select id="jurisdiction_id" name="jurisdiction_id" required class="form-control">
+            <option value="">Select jurisdiction</option>
+            {% for j in jurisdictions %}
+            <option value="{{ j.id }}" {% if record and record.jurisdiction_id == j.id %}selected{% endif %}>{{ j.name }} ({{ j.code }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          <label for="nexus_type">Nexus Type *</label>
+          <select id="nexus_type" name="nexus_type" required class="form-control">
+            <option value="physical" {% if record and record.nexus_type == 'physical' %}selected{% endif %}>Physical</option>
+            <option value="economic" {% if record and record.nexus_type == 'economic' %}selected{% endif %}>Economic</option>
+            <option value="affiliate" {% if record and record.nexus_type == 'affiliate' %}selected{% endif %}>Affiliate</option>
+            <option value="click-through" {% if record and record.nexus_type == 'click-through' %}selected{% endif %}>Click-Through</option>
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="risk_level">Risk Level</label>
+          <select id="risk_level" name="risk_level" class="form-control">
+            {% for r in risks %}
+            <option value="{{ r.value }}" {% if record and record.risk_level == r %}selected{% endif %}>{{ r.value | title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="last_reviewed">Last Reviewed</label>
+          <input type="date" id="last_reviewed" name="last_reviewed" value="{{ record.last_reviewed.strftime('%Y-%m-%d') if record and record.last_reviewed else '' }}" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          <label for="revenue_in_jurisdiction">Revenue in Jurisdiction ($)</label>
+          <input type="number" id="revenue_in_jurisdiction" name="revenue_in_jurisdiction" step="0.01" value="{{ record.revenue_in_jurisdiction if record else '0' }}" class="form-control">
+        </div>
+        <div class="form-group col-md-4">
+          <label for="employee_count">Employee Count</label>
+          <input type="number" id="employee_count" name="employee_count" value="{{ record.employee_count if record else '0' }}" class="form-control">
+        </div>
+        <div class="form-group col-md-4">
+          <label for="property_value">Property Value ($)</label>
+          <input type="number" id="property_value" name="property_value" step="0.01" value="{{ record.property_value if record else '0' }}" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-3">
+          <label class="checkbox-label">
+            <input type="checkbox" name="has_nexus" {% if record and record.has_nexus %}checked{% endif %}>
+            Has Nexus
+          </label>
+        </div>
+        <div class="form-group col-md-3">
+          <label class="checkbox-label">
+            <input type="checkbox" name="threshold_met" {% if record and record.threshold_met %}checked{% endif %}>
+            Threshold Met
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" rows="3" class="form-control">{{ record.notes if record else '' }}</textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ 'Update' if record else 'Create' }}</button>
+        <a href="{{ url_for('nexus.list_nexus') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
